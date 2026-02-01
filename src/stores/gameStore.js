@@ -6,6 +6,10 @@ export const useGameStore = create((set, get) => ({
   reputation: 0,
   day: 1,
   
+  // Camera state
+  isZoomedIn: false,
+  zoomTarget: 'monitor', // 'monitor', 'poster', etc.
+  
   // Task management
   currentTask: null,
   completedTasks: [],
@@ -14,6 +18,11 @@ export const useGameStore = create((set, get) => ({
   // Window management
   openWindows: [],
   activeWindow: null,
+  
+  // Camera Actions
+  zoomIn: () => set({ isZoomedIn: true }),
+  zoomOut: () => set({ isZoomedIn: false }),
+  toggleZoom: () => set((state) => ({ isZoomedIn: !state.isZoomedIn })),
   
   // Actions
   addMoney: (amount) => set((state) => ({ money: state.money + amount })),
