@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion'
 import { Mail, Code, Wallet, Music, Settings, Power } from 'lucide-react'
 import { useGameStore } from '../stores/gameStore'
+import { soundManager } from '../utils/sounds'
 
 const taskbarItems = [
   { id: 'mail', icon: Mail, label: 'Mail', showBadge: true },
@@ -36,7 +37,11 @@ export function Taskbar() {
         {taskbarItems.map((item) => (
           <button
             key={item.id}
-            onClick={() => openWindow(item.id)}
+            onClick={() => {
+              soundManager.play('windowOpen')
+              openWindow(item.id)
+            }}
+            onMouseEnter={() => soundManager.play('hover')}
             className="relative p-3 hover:bg-dark-border rounded-lg transition-all group"
             title={item.label}
           >

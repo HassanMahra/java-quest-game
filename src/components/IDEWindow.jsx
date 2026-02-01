@@ -1,10 +1,11 @@
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Code, Play, FolderTree, FileCode, Terminal, CheckCircle, XCircle, Lightbulb } from 'lucide-react'
 import Editor from '@monaco-editor/react'
 import confetti from 'canvas-confetti'
 import { Window } from './Window'
 import { useGameStore } from '../stores/gameStore'
+import { soundManager } from '../utils/sounds'
 
 export function IDEWindow() {
   const { currentTask, completeTask, addMoney, addReputation, closeWindow } = useGameStore()
@@ -15,7 +16,7 @@ export function IDEWindow() {
   const editorRef = useRef(null)
   
   // Update code when task changes
-  useState(() => {
+  useEffect(() => {
     if (currentTask) {
       setCode(currentTask.initialCode)
       setConsoleOutput([])
@@ -35,6 +36,7 @@ export function IDEWindow() {
   const handleDeploy = async () => {
     if (!currentTask) return
     
+    soundManager.play('deploy')
     setIsRunning(true)
     setConsoleOutput([])
     
@@ -49,6 +51,7 @@ export function IDEWindow() {
     const isCorrect = currentTask.solutionCheck(code)
     
     if (isCorrect) {
+      soundManager.play('success')
       addConsoleMessage('success', currentTask.successMessage)
       addConsoleMessage('success', `💰 +${currentTask.reward} € verdient!`)
       addConsoleMessage('success', `⭐ +${currentTask.xp} XP erhalten!`)
@@ -60,6 +63,10 @@ export function IDEWindow() {
         origin: { y: 0.6 }
       })
       
+      // Money sound
+      setTimeout(() => soundManager.play('money'), 300)
+      setTimeout(() => soundManager.play('levelUp'), 600)
+      
       // Add rewards
       addMoney(currentTask.reward)
       addReputation(currentTask.xp)
@@ -70,6 +77,7 @@ export function IDEWindow() {
       }, 2000)
       
     } else {
+      soundManager.play('error')
       addConsoleMessage('error', currentTask.errorMessage)
       addConsoleMessage('warning', '💡 Versuche es nochmal! Klicke auf die Glühbirne für einen Tipp.')
     }
